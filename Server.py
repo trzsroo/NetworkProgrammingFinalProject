@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Nov 14 17:11:59 2018
+
+@author: hillg2
+"""
+
 import socket
 import _thread
 serverPort = 9999
@@ -50,10 +57,11 @@ def clientHandler(address,name):
 
 def main():
     print('Server is waiting for clients...')
+    clientHandler()
 
     while True:
 
         message, address = serverSocket.recvfrom(1024)
 
-
-
+main()
+serverSocket.close();
