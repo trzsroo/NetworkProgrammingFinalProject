@@ -1,59 +1,74 @@
 import socket
 import _thread
-serverPort = 9999
+import tkinter
 
-serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-clientPairs = []
+serverPort=9999
 
-serverSocket.bind(('', serverPort))
+serverSocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+clientPairs=[]
+CONFIRM="You are connected to the server, Please enter your username:"
 
+serverSocket.bind(('',serverPort))
 
-# def findPartner(address):
-#     count = 0
-#     clients = len(clientPairs)
-#     for item in clientPairs:
-#         if address != item:
-#             count += 1
-#     if count == clients:
-#         clientPairs.append(address)
+serverSocket.listen(2)
 
 class ClientPair:
-    def __init__(self,client1Address, client1Name):
+    def __init__(self,client1Address,client1Connect):
         self.client1Add=client1Address
-        self.client1Name=client1Name
+        self.client1Connect = client1Connect
+        self.client1Name=''
         self.client2Add=0
+        self.client2Connect =''
         self.client2Name=''
 
-    def addClient2(self,client2Address,client2Name):
+    def addClient2(self,client2Address,client2Connect):
         self.client2Add=client2Address
-        self.client2Name=client2Name
+        self.client2Connect=client2Connect
+
+    def addUsernames(self,client1Username, client2Username):
+        self.client1Name=client1Username
+        self.client2Name=client2Username
+
+def chatHandler(clientPair):
+    client1Con=clientPair.client1Connect
+    client2Con=clientPair.client2Connect
 
 
 
-def clientHandler(address,name):
-    confirmation='Client Connected to Server'
-    serverSocket.sendto(confirmation.encode(),address)
+    client1Con.send(("You are connected with "+clientPair.client2Name).encode())
+    client2Con.send(("You are connected with "+clientPair.client1Name).encode())
+    while True:
+        _thread.start_new(clientHandler,(client1Con,client2Con,))
+        _thread.start_new(clientHandler,(client2Con,client1Con))
 
-    if len(clientPairs)==0:
-        clientPair=ClientPair(address,name)
-        clientPairs.append(clientPair)
-    else:
-        clientPairs[0].addClient2(address)
-        message='You are connected with '+ clientPairs[0].client1Name
-        serverSocket.sendto(message.encode(),address)
+def clientHandler(connection1,connection2):
+    try:
 
-    # while True:
+        message = connection1.recv(1024).decode()
+        connection2.send(message.encode())
 
-
-
+    except ConnectionResetError:
+        print("Someone is unreachable")
 
 
 def main():
     print('Server is waiting for clients...')
 
+    box=tkinter.Tk()
+    box.mainloop()
     while True:
+        connection1,address1=serverSocket.accept()
 
-        message, address = serverSocket.recvfrom(1024)
+        connection1.send(CONFIRM.encode())
+        clientPairN=ClientPair(address1,connection1)
 
+        connection2,address2=serverSocket.accept()
+
+        connection2.send(CONFIRM.encode())
+        clientPairN.addClient2(address2,connection2)
+
+        clientPairs.append(clientPairN)
+
+        _thread.start_new(chatHandler,(clientPairN,))
 
 
