@@ -22,10 +22,11 @@ def callback():
     print (e1.get())
     
 def send():
-    
 
-b = tkinter.Button(usernameButton, text="Send", width=10, command=callback)
-b.grid(row = 0, column = 2 )
-usernameButton.mainloop()
-s = e1.get() 
-print(s)
+    b = tkinter.Button(usernameButton, text="Send", width=10, command=callback)
+    b.grid(row = 0, column = 2 )
+    usernameButton.mainloop()
+    s = e1.get()
+    print(s)
+
+send()

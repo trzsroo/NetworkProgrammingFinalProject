@@ -7,6 +7,7 @@ serverPort=9999
 serverSocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 clientPairs=[]
 CONFIRM="You are connected to the server, Please enter your username:"
+MESSAGECONFIRM="..."
 
 serverSocket.bind(('',serverPort))
 
@@ -36,16 +37,21 @@ def chatHandler(clientPair):
     client1Con=clientPair.client1Connect
     client2Con=clientPair.client2Connect
 
-    client1Con.send(("You are connected with "+clientPair.client2Name).encode())
-    client2Con.send(("You are connected with "+clientPair.client1Name).encode())
-    while True:
-        _thread.start_new(clientHandler,(client1Con,client2Con,))
-        _thread.start_new(clientHandler,(client2Con,client1Con))
+    try:
+        client1Con.send(("You are connected with "+clientPair.client2Name).encode())
+        client2Con.send(("You are connected with "+clientPair.client1Name).encode())
+        while True:
+            _thread.start_new(clientHandler,(client1Con,client2Con,))
+            _thread.start_new(clientHandler,(client2Con,client1Con))
+    except ConnectionResetError:
+        client1Con.send((clientPair.client2Name +" has disconnected").encode())
+        client2Con.send((clientPair.client1Name +" has disconnected").encode())
 
 def clientHandler(connection1,connection2):
     try:
 
         message = connection1.recv(1024).decode()
+        connection1.send(MESSAGECONFIRM.encode())
         connection2.send(message.encode())
 
     except ConnectionResetError:
@@ -58,16 +64,19 @@ def main():
     #box=tkinter.Tk()
     #box.mainloop()
     while True:
+
         connection1,address1=serverSocket.accept()
 
         connection1.send(CONFIRM.encode())
-        print(address1+" has connected")
+        print(str(address1)+" has connected")
+        print(connection1)
         clientPairN=ClientPair(address1,connection1)
 
         connection2,address2=serverSocket.accept()
 
         connection2.send(CONFIRM.encode())
-        print(address2+" has connected")
+        print(str(address2)+" has connected")
+        print(connection2)
         clientPairN.addClient2(address2,connection2)
 
         username1=connection1.recv(1024).decode()

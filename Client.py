@@ -13,25 +13,26 @@ serverPort = 9999
 
 sockobj = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sockobj.connect((serverHost, serverPort))
-taken = True
-while taken:
-    usernameButton = tkinter.Tk()
-    tkinter.Label(usernameButton, text='Username').grid(row=0) 
-    e = tkinter.Entry(usernameButton) 
-    e.grid(row=0, column=1) 
-    tkinter.mainloop()
-    
-    username = e.get()
-    sockobj.send(username.encode(),(serverHost, serverPort))
-    
-chatScreen = tkinter.Tk()
-tkinter.Label(chatScreen, text='Send').grid(row=0) 
-e1 = tkinter.Entry(chatScreen) 
-e1.grid(row=10, column=1) 
-tkinter.mainloop()
-    
-username = e1.get()
-sockobj.send(chatScreen.encode(),(serverHost, serverPort))
+
+# taken = True
+# while taken:
+#     usernameButton = tkinter.Tk()
+#     tkinter.Label(usernameButton, text='Username').grid(row=0)
+#     e = tkinter.Entry(usernameButton)
+#     e.grid(row=0, column=1)
+#     tkinter.mainloop()
+#
+#     username = e.get()
+#     sockobj.send(username.encode(),(serverHost, serverPort))
+#
+# chatScreen = tkinter.Tk()
+# tkinter.Label(chatScreen, text='Send').grid(row=0)
+# e1 = tkinter.Entry(chatScreen)
+# e1.grid(row=10, column=1)
+# tkinter.mainloop()
+#
+# username = e1.get()
+# sockobj.send(chatScreen.encode(),(serverHost, serverPort))
 
 
 print('Welcome to this chat room!')
