@@ -29,11 +29,12 @@ class ClientPair:
         self.client1Name=client1Username
         self.client2Name=client2Username
 
+    def toString(self):
+        print(str(self.client1Add) + " and " + str(self.client2Add) + " are in conversation")
+
 def chatHandler(clientPair):
     client1Con=clientPair.client1Connect
     client2Con=clientPair.client2Connect
-
-
 
     client1Con.send(("You are connected with "+clientPair.client2Name).encode())
     client2Con.send(("You are connected with "+clientPair.client1Name).encode())
@@ -60,15 +61,22 @@ def main():
         connection1,address1=serverSocket.accept()
 
         connection1.send(CONFIRM.encode())
+        print(address1+" has connected")
         clientPairN=ClientPair(address1,connection1)
 
         connection2,address2=serverSocket.accept()
 
         connection2.send(CONFIRM.encode())
+        print(address2+" has connected")
         clientPairN.addClient2(address2,connection2)
 
+        username1=connection1.recv(1024).decode()
+        username2=connection2.recv(1024).decode()
+        clientPairN.addUsernames(username1,username2)
+
         clientPairs.append(clientPairN)
-
         _thread.start_new(chatHandler,(clientPairN,))
+        print(clientPairN.toString())
 
 
+main()
