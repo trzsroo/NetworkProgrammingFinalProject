@@ -55,8 +55,8 @@ def clientHandler(connection1,connection2):
 def main():
     print('Server is waiting for clients...')
 
-    box=tkinter.Tk()
-    box.mainloop()
+    #box=tkinter.Tk()
+    #box.mainloop()
     while True:
         connection1,address1=serverSocket.accept()
 
