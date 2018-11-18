@@ -28,15 +28,18 @@ def receive():
 
 
 def send(Entry = None):
+    global message
     message = client_message.get()
     client_message.set("")  # Clears input field.
-    if log.size() == 2:
+    if log.size() == 1:
         sockobj.send(message.encode())
+        global username
         username = message
         log.insert(tkinter.END, 'Welcome ' + username + ' to the chat!')
         
     
     else:
+        message = username + ': ' + message
         sockobj.send(message.encode())
         log.insert(tkinter.END, message)
         print(message)
@@ -49,27 +52,26 @@ def send(Entry = None):
 def close(Entry = None):
     client_message.set("*quit*")
     send()
+    master.destroy
 
 #chat message
 client_message = tkinter.StringVar()
-client_message.set("Type your messages here.")
+client_message.set("Type in your username first.")
 
 #shows past messages
 scrollbar = tkinter.Scrollbar(frame)
 log = tkinter.Listbox(frame, height=15, width=50, yscrollcommand=scrollbar.set)
 scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
-log.insert(tkinter.END, 'Please type in a username.')
-log.insert(tkinter.END, 'You can type in *quit* to end the chat.')
+log.insert(tkinter.END, 'You can type in *quit* to end the chat. Press esc to close the window.')
 
 # list of messages sent and received
 log.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
 log.pack()
 frame.pack()
 
-username = ''
 
 #chat entry
-entry = tkinter.Entry(master, textvariable=client_message)
+entry = tkinter.Entry(master, width = 50, textvariable=client_message)
 entry.bind("<Return>", send)
 entry.pack(side = tkinter.LEFT)
 
@@ -78,5 +80,6 @@ send_button = tkinter.Button(master, text="Send", command=send)
 send_button.pack(side = tkinter.TOP)
 
 master.protocol("WM_DELETE_WINDOW", close)
+master.bind('<Escape>', lambda e: master.destroy())
 
 master.mainloop()
