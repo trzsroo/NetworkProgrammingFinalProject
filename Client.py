@@ -4,47 +4,79 @@ Created on Tue Oct 30 09:50:11 2018
 
 @author: hillg2
 """
-
 import socket
 import tkinter
 
-serverHost = 'localHost'
+serverHost = 'localhost'
 serverPort = 9999
 
 sockobj = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sockobj.connect((serverHost, serverPort))
 
-# taken = True
-# while taken:
-#     usernameButton = tkinter.Tk()
-#     tkinter.Label(usernameButton, text='Username').grid(row=0)
-#     e = tkinter.Entry(usernameButton)
-#     e.grid(row=0, column=1)
-#     tkinter.mainloop()
-#
-#     username = e.get()
-#     sockobj.send(username.encode(),(serverHost, serverPort))
-#
-# chatScreen = tkinter.Tk()
-# tkinter.Label(chatScreen, text='Send').grid(row=0)
-# e1 = tkinter.Entry(chatScreen)
-# e1.grid(row=10, column=1)
-# tkinter.mainloop()
-#
-# username = e1.get()
-# sockobj.send(chatScreen.encode(),(serverHost, serverPort))
+master = tkinter.Tk()
+
+frame = tkinter.Frame(master)
+
+def receive():
+    while True:
+        try:
+            msg = sockobj.recv(2048).decode()
+            log.insert(tkinter.END, msg)
+        except:
+            log.insert(tkinter.END, 'User may have left the chat')
+            break
 
 
-print('Welcome to this chat room!')
+def send(Entry = None):
+    message = client_message.get()
+    client_message.set("")  # Clears input field.
+    if log.size() == 2:
+        sockobj.send(message.encode())
+        username = message
+        log.insert(tkinter.END, 'Welcome ' + username + ' to the chat!')
+        
+    
+    else:
+        sockobj.send(message.encode())
+        log.insert(tkinter.END, message)
+        print(message)
+        
+        if message == "*quit*":
+            sockobj.close()
+            master.quit()
+        
 
-message = input()
-while True:
-    for line in message :
-        if message:
-            print('You: ', message)
-            sockobj.send(message.encode(), (serverHost, serverPort))
-        else:
-            otherMessage = sockobj.recv(2048).decode()
-            print('Other User: ', str(otherMessage))
+def close(Entry = None):
+    client_message.set("*quit*")
+    send()
 
-sockobj.close()
+#chat message
+client_message = tkinter.StringVar()
+client_message.set("Type your messages here.")
+
+#shows past messages
+scrollbar = tkinter.Scrollbar(frame)
+log = tkinter.Listbox(frame, height=15, width=50, yscrollcommand=scrollbar.set)
+scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+log.insert(tkinter.END, 'Please type in a username.')
+log.insert(tkinter.END, 'You can type in *quit* to end the chat.')
+
+# list of messages sent and received
+log.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
+log.pack()
+frame.pack()
+
+username = ''
+
+#chat entry
+entry = tkinter.Entry(master, textvariable=client_message)
+entry.bind("<Return>", send)
+entry.pack(side = tkinter.LEFT)
+
+#send button
+send_button = tkinter.Button(master, text="Send", command=send)
+send_button.pack(side = tkinter.TOP)
+
+master.protocol("WM_DELETE_WINDOW", close)
+
+master.mainloop()
