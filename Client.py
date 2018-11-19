@@ -52,7 +52,7 @@ def send(Entry = None):
 def close(Entry = None):
     client_message.set("*quit*")
     send()
-    master.destroy
+    master.destroy()
 
 #chat message
 client_message = tkinter.StringVar()
