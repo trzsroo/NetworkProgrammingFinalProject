@@ -20,14 +20,14 @@ frame = tkinter.Frame(master)
 def receive():
     while True:
         try:
-            msg = sockobj.recv(2048).decode()
+            msg = sockobj.recv(1024).decode()
             log.insert(tkinter.END, msg)
         except:
             log.insert(tkinter.END, 'User may have left the chat')
             break
 
 
-def send(Entry = None):
+def sendMessage(Entry = None):
     global message
     message = client_message.get()
     client_message.set("")  # Clears input field.
@@ -47,11 +47,10 @@ def send(Entry = None):
         if message == "*quit*":
             sockobj.close()
             master.quit()
-        
 
-def close(Entry = None):
+def closeWindow(Entry = None):
     client_message.set("*quit*")
-    send()
+    sendMessage()
     master.destroy()
 
 #chat message
@@ -72,14 +71,14 @@ frame.pack()
 
 #chat entry
 entry = tkinter.Entry(master, width = 50, textvariable=client_message)
-entry.bind("<Return>", send)
+entry.bind("<Return>", sendMessage())
 entry.pack(side = tkinter.LEFT)
 
 #send button
-send_button = tkinter.Button(master, text="Send", command=send)
+send_button = tkinter.Button(master, text="Send", command=sendMessage())
 send_button.pack(side = tkinter.TOP)
 
-master.protocol("WM_DELETE_WINDOW", close)
+master.protocol("WM_DELETE_WINDOW", closeWindow())
 master.bind('<Escape>', lambda e: master.destroy())
 
 master.mainloop()
