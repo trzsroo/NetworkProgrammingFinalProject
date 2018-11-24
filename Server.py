@@ -57,7 +57,7 @@ def chatHandler(clientPair):
 def clientHandler(connection1,connection2):
     message=connection1.recv(1024).decode()
     print(message)
-    connection1.send(MESSAGECONFIRM.encode())
+    #connection1.send(MESSAGECONFIRM.encode())
     connection2.send(message.encode())
 
 def main():

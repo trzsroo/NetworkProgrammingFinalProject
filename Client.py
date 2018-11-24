@@ -6,6 +6,7 @@ Created on Tue Oct 30 09:50:11 2018
 """
 import socket
 import tkinter
+import threading
 
 serverHost = 'localhost'
 serverPort = 9999
@@ -20,7 +21,7 @@ frame = tkinter.Frame(master)
 def receive():
     while True:
         try:
-            msg = sockobj.recv(1024).decode()
+            msg = sockobj.recv(2048).decode()
             log.insert(tkinter.END, msg)
         except:
             log.insert(tkinter.END, 'User may have left the chat')
@@ -31,7 +32,7 @@ def sendMessage(Entry = None):
     global message
     message = client_message.get()
     client_message.set("")  # Clears input field.
-    if log.size() == 1:
+    if log.size() <= 2:
         sockobj.send(message.encode())
         global username
         username = message
@@ -47,6 +48,7 @@ def sendMessage(Entry = None):
         if message == "*quit*":
             sockobj.close()
             master.quit()
+        
 
 def closeWindow(Entry = None):
     client_message.set("*quit*")
@@ -71,14 +73,16 @@ frame.pack()
 
 #chat entry
 entry = tkinter.Entry(master, width = 50, textvariable=client_message)
-entry.bind("<Return>", sendMessage())
+entry.bind("<Return>", sendMessage)
 entry.pack(side = tkinter.LEFT)
 
 #send button
-send_button = tkinter.Button(master, text="Send", command=sendMessage())
+send_button = tkinter.Button(master, text="Send", command=sendMessage)
 send_button.pack(side = tkinter.TOP)
 
-master.protocol("WM_DELETE_WINDOW", closeWindow())
+master.protocol("WM_DELETE_WINDOW", closeWindow)
 master.bind('<Escape>', lambda e: master.destroy())
 
+rThread = threading.Thread(target = receive)
+rThread.start()
 master.mainloop()
