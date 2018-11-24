@@ -61,7 +61,7 @@ client_message.set("Type in your username first.")
 
 #shows past messages
 scrollbar = tkinter.Scrollbar(frame)
-log = tkinter.Listbox(frame, height=15, width=50, yscrollcommand=scrollbar.set)
+log = tkinter.Listbox(frame, height=15, width=100, yscrollcommand=scrollbar.set)
 scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
 log.insert(tkinter.END, 'You can type in *quit* to end the chat. Press esc to close the window.')
 
