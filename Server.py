@@ -7,7 +7,7 @@ serverPort=9999
 serverSocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 clientPairs=[]
 CONFIRM="You are connected to the server, Please enter your username:"
-MESSAGECONFIRM="..."
+MESSAGECONFIRM="*sent*"
 
 serverSocket.bind(('',serverPort))
 
@@ -57,7 +57,7 @@ def chatHandler(clientPair):
 def clientHandler(connection1,connection2):
     message=connection1.recv(1024).decode()
     print(message)
-    #connection1.send(MESSAGECONFIRM.encode())
+    connection1.send(MESSAGECONFIRM.encode())
     connection2.send(message.encode())
 
 def main():
