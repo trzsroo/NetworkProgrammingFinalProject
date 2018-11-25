@@ -15,7 +15,6 @@ serverPort=9999
 serverSocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 clientPairs=[]
 CONFIRM="You are connected to the server, Please enter your username:"
-MESSAGECONFIRM="*sent*"
 DISCONNECT="The other person has left the chat"
 
 serverSocket.bind(('',serverPort))
@@ -70,7 +69,6 @@ def clientHandler(connection1,connection2):
         try:
             message=connection1.recv(1024).decode()
             if message!="*quit*":
-                connection1.send(MESSAGECONFIRM.encode())
                 connection2.send(message.encode())
             else:
                 connect=False

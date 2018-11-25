@@ -23,6 +23,8 @@ def receive():
         try:
             msg = sockobj.recv(2048).decode()
             log.insert(tkinter.END, msg)
+            if(log.size() > 2):
+                log.itemconfig(log.size()-1, fg = 'green')
         except:
             log.insert(tkinter.END, 'User may have left the chat')
             break
