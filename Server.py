@@ -51,12 +51,12 @@ def chatHandler(clientPair):
     try:
         client1Con.send(("You are connected with "+clientPair.client2Name).encode())
         client2Con.send(("You are connected with "+clientPair.client1Name).encode())
-        while True:
-            try:
-                _thread.start_new(clientHandler,(client1Con,client2Con,))
-                _thread.start_new(clientHandler,(client2Con,client1Con))
-            except:
-                break
+
+        _thread.start_new(clientHandler,(client1Con,client2Con,))
+        print("Send/Receive started for "+clientPair.client1Name)
+        _thread.start_new(clientHandler,(client2Con,client1Con,))
+        print("Send/Receive started for "+clientPair.client2Name)
+
     except ConnectionResetError:
         client1Con.send((clientPair.client2Name+" has disconnected").encode())
         print(clientPair.client1Name+" and "+clientPair.client2Name+" are no longer in conversation")
@@ -65,16 +65,20 @@ def chatHandler(clientPair):
 #thread method for each client conversation, receives message from one client and immediately sends
 #message to other client
 def clientHandler(connection1,connection2):
-    message=connection1.recv(1024).decode()
-    print(message)
-    if message!="*quit*":
+    connect=True
+    while connect:
+        try:
+            message=connection1.recv(1024).decode()
+            if message!="*quit*":
+                connection1.send(MESSAGECONFIRM.encode())
+                connection2.send(message.encode())
+            else:
+                connect=False
+                connection1.close()
+                connection2.send(DISCONNECT.encode())
+        except ConnectionResetError:
+            connect=False
 
-        connection1.send(MESSAGECONFIRM.encode())
-        connection2.send(message.encode())
-        print()
-    else:
-        connection1.close()
-        connection2.send(DISCONNECT.encode())
 
 def main():
     print('Server is waiting for clients...')
@@ -84,7 +88,6 @@ def main():
     # messageLog.pack(side=tkinter.LEFT,fill=tkinter.BOTH)
     # messageLog.pack()
     # frame.pack()
-
 
     while True:
         #connect first client to server and send ACK back
@@ -128,4 +131,3 @@ def main():
         print(clientPairN.toString())
 
 main()
-
