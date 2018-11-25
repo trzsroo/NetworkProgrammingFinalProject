@@ -27,28 +27,42 @@ def receive():
             log.insert(tkinter.END, 'User may have left the chat')
             break
 
+def cutMessage(message):
+    if(len(message) > 90):
+        msg1 = message[:90]
+        sockobj.send(msg1.encode())
+        log.insert(tkinter.END, msg1)
+        msg2 = message[90:]
+        cutMessage(msg2)
+    elif len(message < 90):
+        sockobj.send(message.encode())
+        log.insert(tkinter.END, message)
 
 def sendMessage(Entry = None):
     global message
     message = client_message.get()
     client_message.set("")  # Clears input field.
-    if log.size() <= 2:
+    if log.size() == 2:
         sockobj.send(message.encode())
         global username
         username = message
-        log.insert(tkinter.END, 'Welcome ' + username + ' to the chat!')
+        message = 'Welcome ' + username + ' to the chat!'
+        log.insert(tkinter.END, message)
         
     
     else:
-        message = username + ': ' + message
-        sockobj.send(message.encode())
-        log.insert(tkinter.END, message)
-        print(message)
-        
         if message == "*quit*":
             sockobj.send(message.encode())
+            log.insert(tkinter.END, message)
             sockobj.close()
             master.quit()
+        else:  
+            message = username + ': ' + message
+            if len(message) < 90 :
+                sockobj.send(message.encode())
+                log.insert(tkinter.END, message)
+            else:
+                cutMessage(message)
         
 
 def closeWindow(Entry = None):
@@ -62,18 +76,19 @@ client_message.set("Type in your username first.")
 
 #shows past messages
 scrollbar = tkinter.Scrollbar(frame)
-log = tkinter.Listbox(frame, height=15, width=100, yscrollcommand=scrollbar.set)
+log = tkinter.Listbox(frame, width=100, yscrollcommand=scrollbar.set)
 scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
-log.insert(tkinter.END, 'You can type in *quit* to end the chat. Press esc to close the window.')
+log.insert(tkinter.END, 'You can type in *quit* or press esc to close the window. \n')
+
+scrollbar.config(command=log.yview)
 
 # list of messages sent and received
 log.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
 log.pack()
 frame.pack()
 
-
 #chat entry
-entry = tkinter.Entry(master, width = 50, textvariable=client_message)
+entry = tkinter.Entry(master, width = 100, textvariable=client_message)
 entry.bind("<Return>", sendMessage)
 entry.pack(side = tkinter.LEFT)
 
