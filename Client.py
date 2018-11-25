@@ -99,7 +99,7 @@ send_button = tkinter.Button(master, text="Send", command=sendMessage)
 send_button.pack(side = tkinter.TOP)
 
 master.protocol("WM_DELETE_WINDOW", closeWindow)
-master.bind('<Escape>', lambda e: master.destroy())
+master.bind('<Escape>', lambda e: closeWindow())
 
 rThread = threading.Thread(target = receive)
 rThread.start()
