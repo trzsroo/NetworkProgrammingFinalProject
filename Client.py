@@ -15,6 +15,7 @@ sockobj = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sockobj.connect((serverHost, serverPort))
 
 master = tkinter.Tk()
+master.title("Chat Room")
 
 frame = tkinter.Frame(master)
 
