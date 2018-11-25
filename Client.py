@@ -46,6 +46,7 @@ def sendMessage(Entry = None):
         print(message)
         
         if message == "*quit*":
+            sockobj.send(message.encode())
             sockobj.close()
             master.quit()
         
