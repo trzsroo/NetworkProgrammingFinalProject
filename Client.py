@@ -37,7 +37,7 @@ def cutMessage(message):
         log.insert(tkinter.END, msg1)
         msg2 = message[90:]
         cutMessage(msg2)
-    elif len(message < 90):
+    elif len(message) < 90:
         sockobj.send(message.encode())
         log.insert(tkinter.END, message)
 
