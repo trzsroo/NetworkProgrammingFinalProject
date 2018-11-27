@@ -26,7 +26,7 @@ def receive():
             log.insert(tkinter.END, msg)
             if(log.size() > 2):
                 log.itemconfig(log.size()-1, fg = 'green')
-        except:
+        except ConnectionAbortedError:
             log.insert(tkinter.END, 'User may have left the chat')
             break
 

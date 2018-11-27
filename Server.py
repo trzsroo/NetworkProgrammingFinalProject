@@ -1,3 +1,8 @@
+
+"""
+@author Erinn Ferguson
+"""
+
 import socket
 import _thread
 
